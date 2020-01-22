@@ -1,12 +1,13 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import styled from 'styled-components';
 import '../styles/index.css';
-import { reducer, initialState } from '../reducer/reducer';
+import { listingReducer, initialState } from '../reducer/listingReducer';
 import MovieCard from '../components/MovieCard';
 import Search from '../components/Search';
 import Loading from '../components/Loading';
-import ErrorMessage from '../components/ErrorMessage';
+import Message from '../components/Message';
 import popularListing from '../data/popularListing-mock';
+import { TMDB_BASE_URL, API_KEY } from '../setting/options';
 
 const TopRow = styled.div`
     text-align: center;
@@ -21,70 +22,69 @@ const Content = styled.div`
     justify-content: space-between;
 `;
 
-const MOVIE_API_URL =
-    'http://api.themoviedb.org/3/movie/popular?api_key=${process.env.REACT_APP_TMDB_API_KEY}';
-
 const Listing = () => {
-    const [state, dispatch] = useReducer(reducer, initialState);
+    const [state, dispatch] = useReducer(listingReducer, initialState);
+    const [url, setUrl] = useState(`${TMDB_BASE_URL}/movie/popular?${API_KEY}`);
+    const [searchTerm, setSearchTerm] = useState('');
 
-    // componentDidMount
     useEffect(() => {
-        // fetch(MOVIE_API_URL)
-        //     .then(response => response.json())
-        //     .then(jsonResponse => {
-        //         console.log(jsonResponse);
-        //         dispatch({
-        //             type: 'SEARCH_MOVIES_SUCCESS',
-        //             payload: jsonResponse.results
-        //         });
-        //     });
+        const fetchData = async () => {
+            try {
+                const res = await fetch(url);
+                const json = await res.json();
 
-        setTimeout(() => {
-            dispatch({
-                type: 'SEARCH_MOVIES_SUCCESS',
-                payload: popularListing.results
-            });
-        }, 2000);
-    }, []);
+                if (json.success === false) {
+                    dispatch({
+                        type: 'SEARCH_MOVIES_FAILURE',
+                        error: json.status_message
+                    });
+                    return;
+                }
 
-    const search = searchValue => {
+                dispatch({
+                    type: 'SEARCH_MOVIES_SUCCESS',
+                    payload: json.results
+                });
+            } catch (error) {
+                dispatch({
+                    type: 'SEARCH_MOVIES_FAILURE',
+                    error: error.status_message
+                });
+            }
+        };
+        fetchData();
+    }, [url]);
+
+    const search = searchTerm => {
         dispatch({
             type: 'SEARCH_MOVIES_REQUEST'
         });
 
-        // fetch(`https://www.omdbapi.com/?s=${searchValue}&apikey=f90ffdf2`)
-        //     .then(response => response.json())
-        //     .then(jsonResponse => {
-        //         if (jsonResponse.Response === 'True') {
-        //             dispatch({
-        //                 type: 'SEARCH_MOVIES_SUCCESS',
-        //                 payload: jsonResponse.Search
-        //             });
-        //         } else {
-        //             dispatch({
-        //                 type: 'SEARCH_MOVIES_FAILURE',
-        //                 error: jsonResponse.Error
-        //             });
-        //         }
-        //     });
+        setSearchTerm(searchTerm);
+
+        setUrl(
+            `${TMDB_BASE_URL}/search/movie?language=en-US&query=${searchTerm}&page=1&include_adult=false&${API_KEY}`
+        );
     };
 
     const { movies, errorMessage, loading } = state;
-    console.log(loading);
 
     return (
         <ListingWrapper>
             <TopRow>
                 <Search search={search} />
-                <p className="App-intro">
-                    Sharing a few of our favourite movies
-                </p>
+                {searchTerm && <p>Your results for {searchTerm}</p>}
             </TopRow>
             <Content>
                 {loading && !errorMessage ? (
                     <Loading />
                 ) : errorMessage ? (
-                    <ErrorMessage errorMessage={errorMessage} />
+                    <Message status="error" message={errorMessage} />
+                ) : !loading && movies.length === 0 ? (
+                    <Message
+                        status="no-results"
+                        message={`No results for ${searchTerm}`}
+                    />
                 ) : (
                     movies.map((movie, index) => (
                         <MovieCard key={`${index}`} movie={movie} />

@@ -85,36 +85,43 @@ const MovieCard = ({ movie }) => {
     const [genre, setGenre] = useState([]);
 
     useEffect(() => {
+        const getGenre = () => {
+            const matchedGenres = genre_ids
+                .map(movieGenreId => {
+                    return genres.filter(genre => {
+                        return genre.id === movieGenreId;
+                    });
+                })
+                .reduce((a, b) => a.concat(b), []);
+
+            setGenre(matchedGenres);
+        };
+
         getGenre();
         return () => {
             console.log('clean up');
         };
     }, []);
 
-    const getGenre = () => {
-        const matchedGenres = genre_ids
-            .map(movieGenreId => {
-                return genres.filter(genre => {
-                    return genre.id === movieGenreId;
-                });
-            })
-            .reduce((a, b) => a.concat(b), []);
-
-        setGenre(matchedGenres);
-    };
-
     return (
         <MovieWrapper>
             <ImageWrapper>
                 <img
                     alt={`The movie titled: ${title}`}
-                    src={`https://image.tmdb.org/t/p/w200/${poster}`}
+                    src={
+                        poster
+                            ? `https://image.tmdb.org/t/p/w200${poster}`
+                            : 'https://via.placeholder.com/200x308&text=No+Poster+Available'
+                    }
                 />
             </ImageWrapper>
             <InfoWrapper>
                 <Heading>
                     {title}{' '}
-                    <span>({format(parseISO(`${release_date}`), 'yyyy')})</span>
+                    <span>
+                        {release_date &&
+                            format(parseISO(`${release_date}`), 'yyyy')}
+                    </span>
                 </Heading>
                 <p>{overview}</p>
                 <InfoList>

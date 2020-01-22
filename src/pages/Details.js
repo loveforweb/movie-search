@@ -2,7 +2,8 @@ import React, { useEffect, useReducer } from 'react';
 import { initialState, detailsReducer } from '../reducer/detailsReducer';
 import styled from 'styled-components';
 import Loading from '../components/Loading';
-import ErrorMessage from '../components/ErrorMessage';
+import Message from '../components/Message';
+import CastMemberCard from '../components/CastMemberCard';
 import detailsMock from '../data/details-mock';
 import creditsMock from '../data/credits-mock';
 
@@ -34,8 +35,6 @@ const TitleWrapper = styled.h2`
     }
 `;
 
-const SpreadWrapper = styled.div``;
-
 const CastWrap = styled.div`
     display: flex;
     flex-direction: row;
@@ -47,13 +46,41 @@ const Row = styled.div`
     flex-direction: row;
 `;
 
-const CastMember = styled.div``;
-
 const Details = props => {
     const { id } = props.match.params;
     const [state, dispatch] = useReducer(detailsReducer, initialState);
 
     useEffect(() => {
+        const fetchData = async () => {
+            dispatch({
+                type: 'MOVIE_DETAILS_REQUEST'
+            });
+
+            try {
+                const res = await fetch(
+                    `https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
+                );
+                const json = await res.json();
+
+                if (json.success === false) {
+                    dispatch({
+                        type: 'MOVIE_DETAILS_FAILURE',
+                        error: json.status_message
+                    });
+                    return;
+                }
+
+                dispatch({
+                    type: 'MOVIE_DETAILS_SUCCESS',
+                    payload: json
+                });
+            } catch (error) {
+                dispatch({
+                    type: 'MOVIE_DETAILS_FAILURE',
+                    error: error.status_message
+                });
+            }
+        };
         fetchData();
         buildCredits();
         return () => {
@@ -61,63 +88,69 @@ const Details = props => {
         };
     }, []);
 
-    const buildCredits = () => {
-        fetch(
-            `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
-        )
-            .then(response => {
-                if (response.status !== 200) {
-                    console.log(
-                        'Looks like there was a problem. Status Code: ' +
-                            response.status
-                    );
-                    return;
-                }
-
-                response.json().then(res => {
-                    const movieCharacters = res.cast.filter(member => {
-                        return member.character;
-                    });
-                    dispatch({
-                        type: 'MOVIE_CAST_UPDATE',
-                        payload: movieCharacters
-                    });
-                });
-            })
-            .catch(err => {
-                dispatch({
-                    type: 'MOVIE_DETAILS_ERROR',
-                    payload: 'Error'
-                });
-            });
-
-        // dispatch({
-        //     type: 'MOVIE_CAST_UPDATE',
-        //     payload: movieCharacters
-        // });
-    };
-
-    const fetchData = () => {
+    const buildCredits = async () => {
         dispatch({
             type: 'MOVIE_DETAILS_REQUEST'
         });
 
-        fetch(
-            `https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
-        )
-            .then(response => response.json())
-            .then(res => {
-                dispatch({
-                    type: 'MOVIE_DETAILS_SUCCESS',
-                    payload: res
-                });
-            });
+        try {
+            const res = await fetch(
+                `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
+            );
+            const json = await res.json();
 
-        // dispatch({
-        //     type: 'MOVIE_DETAILS_SUCCESS',
-        //     payload: detailsMock
-        // });
+            if (json.success === false) {
+                dispatch({
+                    type: 'MOVIE_DETAILS_ERROR',
+                    payload: 'Error'
+                });
+                return;
+            }
+
+            const movieCharacters = json.cast.filter(member => {
+                return member.character;
+            });
+            dispatch({
+                type: 'MOVIE_CAST_UPDATE',
+                payload: movieCharacters
+            });
+        } catch (error) {
+            dispatch({
+                type: 'MOVIE_DETAILS_ERROR',
+                payload: 'Error'
+            });
+        }
     };
+
+    // fetch(
+    //     `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
+    // )
+    //     .then(response => {
+    //         if (response.status !== 200) {
+    //             console.log(
+    //                 'Looks like there was a problem. Status Code: ' +
+    //                     response.status
+    //             );
+    //             return;
+    //         }
+
+    //         response.json().then(res => {
+    //             const movieCharacters = res.cast.filter(member => {
+    //                 return member.character;
+    //             });
+    //             dispatch({
+    //                 type: 'MOVIE_CAST_UPDATE',
+    //                 payload: movieCharacters
+    //             });
+    //         });
+    //     })
+    //     .catch(err => {
+    //         dispatch({
+    //             type: 'MOVIE_DETAILS_ERROR',
+    //             payload: 'Error'
+    //         });
+    //     });
+    // };
 
     const handleBackButton = e => {
         e.preventDefault();
@@ -142,7 +175,7 @@ const Details = props => {
             {loading && !errorMessage ? (
                 <Loading />
             ) : errorMessage ? (
-                <ErrorMessage errorMessage={errorMessage} />
+                <Message errorMessage={errorMessage} />
             ) : (
                 <DetailsWrapper>
                     <button onClick={handleBackButton}>Go back</button>
@@ -177,28 +210,15 @@ const Details = props => {
                             </InfoWrapper>
                         </Row>
                         <Row>
-                            <SpreadWrapper>
-                                <CastWrap>
-                                    {cast &&
-                                        cast.map(member => (
-                                            <CastMember key={member.id}>
-                                                {member.profile_path ? (
-                                                    <img
-                                                        src={`https://image.tmdb.org/t/p/w200${member.profile_path}`}
-                                                        alt={`${member.name} profile`}
-                                                    />
-                                                ) : (
-                                                    'NO IMAGE'
-                                                )}
-                                                <div>
-                                                    Character:{' '}
-                                                    {member.character}
-                                                </div>
-                                                <div>Actor: {member.name}</div>
-                                            </CastMember>
-                                        ))}
-                                </CastWrap>
-                            </SpreadWrapper>
+                            <CastWrap>
+                                {cast &&
+                                    cast.map(member => (
+                                        <CastMemberCard
+                                            key={member.id}
+                                            member={member}
+                                        />
+                                    ))}
+                            </CastWrap>
                         </Row>
                     </ContentWrapper>
                 </DetailsWrapper>

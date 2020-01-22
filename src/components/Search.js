@@ -18,6 +18,16 @@ const SearchButton = styled.input`
         background-color: #282c34;
         color: antiquewhite;
     }
+
+    &:disabled {
+        opacity: 0.5;
+
+        &:hover {
+            background-color: transparent;
+            color: black;
+            cursor: not-allowed;
+        }
+    }
 `;
 
 const SearchInput = styled.input`
@@ -26,25 +36,25 @@ const SearchInput = styled.input`
 `;
 
 const Search = props => {
-    const [searchValue, setSearchValue] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
 
     const handleSearchInputChanges = e => {
-        setSearchValue(e.target.value);
+        setSearchTerm(e.target.value);
     };
 
     const resetInputField = () => {
-        setSearchValue('');
+        setSearchTerm('');
     };
 
     const callSearchFunction = e => {
         e.preventDefault();
-        props.search(searchValue);
+        props.search(searchTerm);
         resetInputField();
     };
     return (
         <SearchForm>
             <SearchInput
-                value={searchValue}
+                value={searchTerm}
                 onChange={handleSearchInputChanges}
                 type="text"
             />
@@ -52,6 +62,7 @@ const Search = props => {
                 onClick={callSearchFunction}
                 type="submit"
                 value="SEARCH"
+                disabled={searchTerm.length ? '' : 'disabled'}
             />
         </SearchForm>
     );
