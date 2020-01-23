@@ -6,7 +6,6 @@ import MovieCard from '../components/MovieCard';
 import Search from '../components/Search';
 import Loading from '../components/Loading';
 import Message from '../components/Message';
-import popularListing from '../data/popularListing-mock';
 import { TMDB_BASE_URL, API_KEY } from '../setting/options';
 
 const TopRow = styled.div`

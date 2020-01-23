@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { format, parseISO } from 'date-fns';
 import { Link } from 'react-router-dom';
 import genres from '../data/genres';
+import { FALLBACK_POSTER } from '../setting/options';
 
 const MovieWrapper = styled.div`
     padding: 0;
@@ -75,13 +76,9 @@ const InfoListItem = styled.li`
     }
 `;
 
-const DEFAULT_PLACEHOLDER_IMAGE =
-    'https://via.placeholder.com/300x445?text=No+poster+available';
-
 const MovieCard = ({ movie }) => {
     const { id, title, release_date, poster_path, overview, genre_ids } = movie;
-    const poster =
-        poster_path === 'N/A' ? DEFAULT_PLACEHOLDER_IMAGE : poster_path;
+    const poster = poster_path === 'N/A' ? FALLBACK_POSTER : poster_path;
     const [genre, setGenre] = useState([]);
 
     useEffect(() => {
@@ -101,7 +98,7 @@ const MovieCard = ({ movie }) => {
         return () => {
             console.log('clean up');
         };
-    }, []);
+    }, [genre_ids]);
 
     return (
         <MovieWrapper>

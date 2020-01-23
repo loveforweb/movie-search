@@ -1,11 +1,10 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { initialState, detailsReducer } from '../reducer/detailsReducer';
 import styled from 'styled-components';
 import Loading from '../components/Loading';
 import Message from '../components/Message';
 import CastMemberCard from '../components/CastMemberCard';
-import detailsMock from '../data/details-mock';
-import creditsMock from '../data/credits-mock';
+import { TMDB_BASE_URL, API_KEY } from '../setting/options';
 
 const DetailsWrapper = styled.div``;
 
@@ -49,6 +48,8 @@ const Row = styled.div`
 const Details = props => {
     const { id } = props.match.params;
     const [state, dispatch] = useReducer(detailsReducer, initialState);
+    const [url, setUrl] = useState(`${TMDB_BASE_URL}/movie/${id}?${API_KEY}`);
+    const [castRequest, setCastRequest] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -57,9 +58,7 @@ const Details = props => {
             });
 
             try {
-                const res = await fetch(
-                    `https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
-                );
+                const res = await fetch(url);
                 const json = await res.json();
 
                 if (json.success === false) {
@@ -70,10 +69,22 @@ const Details = props => {
                     return;
                 }
 
-                dispatch({
-                    type: 'MOVIE_DETAILS_SUCCESS',
-                    payload: json
-                });
+                if (castRequest) {
+                    const movieCharacters = json.cast.filter(member => {
+                        return member.character;
+                    });
+
+                    dispatch({
+                        type: 'MOVIE_CAST_UPDATE',
+                        payload: movieCharacters
+                    });
+                    setCastRequest(false);
+                } else {
+                    dispatch({
+                        type: 'MOVIE_DETAILS_SUCCESS',
+                        payload: json
+                    });
+                }
             } catch (error) {
                 dispatch({
                     type: 'MOVIE_DETAILS_FAILURE',
@@ -86,71 +97,12 @@ const Details = props => {
         return () => {
             console.log('clean up');
         };
-    }, []);
+    }, [url]);
 
     const buildCredits = async () => {
-        dispatch({
-            type: 'MOVIE_DETAILS_REQUEST'
-        });
-
-        try {
-            const res = await fetch(
-                `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
-            );
-            const json = await res.json();
-
-            if (json.success === false) {
-                dispatch({
-                    type: 'MOVIE_DETAILS_ERROR',
-                    payload: 'Error'
-                });
-                return;
-            }
-
-            const movieCharacters = json.cast.filter(member => {
-                return member.character;
-            });
-            dispatch({
-                type: 'MOVIE_CAST_UPDATE',
-                payload: movieCharacters
-            });
-        } catch (error) {
-            dispatch({
-                type: 'MOVIE_DETAILS_ERROR',
-                payload: 'Error'
-            });
-        }
+        setCastRequest(true);
+        setUrl(`${TMDB_BASE_URL}/movie/${id}/credits?${API_KEY}`);
     };
-
-    // fetch(
-    //     `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
-    // )
-    //     .then(response => {
-    //         if (response.status !== 200) {
-    //             console.log(
-    //                 'Looks like there was a problem. Status Code: ' +
-    //                     response.status
-    //             );
-    //             return;
-    //         }
-
-    //         response.json().then(res => {
-    //             const movieCharacters = res.cast.filter(member => {
-    //                 return member.character;
-    //             });
-    //             dispatch({
-    //                 type: 'MOVIE_CAST_UPDATE',
-    //                 payload: movieCharacters
-    //             });
-    //         });
-    //     })
-    //     .catch(err => {
-    //         dispatch({
-    //             type: 'MOVIE_DETAILS_ERROR',
-    //             payload: 'Error'
-    //         });
-    //     });
-    // };
 
     const handleBackButton = e => {
         e.preventDefault();
