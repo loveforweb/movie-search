@@ -133,8 +133,8 @@ const Details = props => {
                 <DetailsWrapper>
                     <button onClick={handleBackButton}>Go back</button>
                     <ContentWrapper>
-                        <Row>
-                            {title && poster_path && (
+                        <div className="row">
+                            {title && (
                                 <ImageWrapper>
                                     <MoviePoster
                                         title={title}
@@ -164,8 +164,8 @@ const Details = props => {
                                     <span>Plot</span>: {overview}
                                 </ItemWrapper>
                             </InfoWrapper>
-                        </Row>
-                        <Row>
+                        </div>
+                        <div className="row">
                             <CastWrap>
                                 {cast &&
                                     cast.map(member => (
@@ -175,7 +175,7 @@ const Details = props => {
                                         />
                                     ))}
                             </CastWrap>
-                        </Row>
+                        </div>
                     </ContentWrapper>
                 </DetailsWrapper>
             )}

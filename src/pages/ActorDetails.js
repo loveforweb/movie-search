@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useReducer } from 'react';
 import { API_KEY } from '../setting/options';
-import { parseISO } from 'date-fns';
+import { parseISO, isBefore } from 'date-fns';
 import Loading from '../components/Loading';
 import Message from '../components/Message';
 import { memberReducer, initialState } from '../reducer/memberReducer';
 import MemberProfile from '../components/MemberProfile';
+import MoviePoster from '../components/MoviePoster';
 
 const ActorDetails = props => {
     const {
@@ -83,10 +84,13 @@ const ActorDetails = props => {
 
     const dispatchOeuvre = oeuvreData => {
         const array = oeuvreData.map(item => {
-            return {
-                ...item,
-                release_date: parseISO(item.release_date)
-            };
+            const date = parseISO(item.release_date);
+            if (isBefore(date, new Date())) {
+                return {
+                    ...item,
+                    release_date: date
+                };
+            }
         });
 
         array.sort(function(a, b) {
@@ -101,6 +105,11 @@ const ActorDetails = props => {
         });
     };
 
+    const handleBackButton = e => {
+        e.preventDefault();
+        props.history.goBack();
+    };
+
     const {
         details,
         loading,
@@ -112,6 +121,7 @@ const ActorDetails = props => {
 
     return (
         <>
+            <button onClick={handleBackButton}>Go back</button>
             {loading && !errorMessage ? (
                 <Loading />
             ) : errorMessage ? (
@@ -126,8 +136,16 @@ const ActorDetails = props => {
                 <Message message={oeuvreErrorMessage} status={'error'} />
             ) : (
                 oeuvre &&
-                oeuvre.slice(0, 8).map(i => {
-                    return <div key={i.id}>{i.title}</div>;
+                oeuvre.slice(0, 8).map((item, i) => {
+                    console.log(item);
+                    return (
+                        <MoviePoster
+                            title={item.title}
+                            imageSize="w200"
+                            image={item.poster_path}
+                            key={item.id}
+                        />
+                    );
                 })
             )}
         </>
