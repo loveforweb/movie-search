@@ -134,13 +134,15 @@ const Details = props => {
                     <button onClick={handleBackButton}>Go back</button>
                     <ContentWrapper>
                         <Row>
-                            <ImageWrapper>
-                                <MoviePoster
-                                    title={title}
-                                    imageSize="w200"
-                                    image={poster_path}
-                                />
-                            </ImageWrapper>
+                            {title && poster_path && (
+                                <ImageWrapper>
+                                    <MoviePoster
+                                        title={title}
+                                        imageSize="w200"
+                                        image={poster_path}
+                                    />
+                                </ImageWrapper>
+                            )}
                             <InfoWrapper>
                                 <TitleWrapper>
                                     {title} <span>({release_date})</span>
