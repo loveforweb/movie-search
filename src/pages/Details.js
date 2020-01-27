@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import Loading from '../components/Loading';
 import Message from '../components/Message';
 import CastMemberCard from '../components/CastMemberCard';
+import MoviePoster from '../components/MoviePoster';
 import { TMDB_BASE_URL, API_KEY } from '../setting/options';
 
 const DetailsWrapper = styled.div``;
@@ -134,9 +135,10 @@ const Details = props => {
                     <ContentWrapper>
                         <Row>
                             <ImageWrapper>
-                                <img
-                                    alt={`The movie titled: ${title}`}
-                                    src={`https://image.tmdb.org/t/p/w200${poster_path}`}
+                                <MoviePoster
+                                    title={title}
+                                    imageSize="w200"
+                                    image={poster_path}
                                 />
                             </ImageWrapper>
                             <InfoWrapper>

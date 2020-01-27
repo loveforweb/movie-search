@@ -2,7 +2,7 @@ import React, { useEffect, useReducer, useState } from 'react';
 import styled from 'styled-components';
 import '../styles/index.css';
 import { listingReducer, initialState } from '../reducer/listingReducer';
-import MovieCard from '../components/MovieCard';
+import MovieResultCard from '../components/MovieResultCard';
 import Search from '../components/Search';
 import Loading from '../components/Loading';
 import Message from '../components/Message';
@@ -72,7 +72,11 @@ const Listing = () => {
         <ListingWrapper>
             <TopRow>
                 <Search search={search} />
-                {searchTerm && <p>Your results for {searchTerm}</p>}
+                {searchTerm && (
+                    <p>
+                        Your results for <strong>{searchTerm}</strong>
+                    </p>
+                )}
             </TopRow>
             <Content>
                 {loading && !errorMessage ? (
@@ -86,7 +90,7 @@ const Listing = () => {
                     />
                 ) : (
                     movies.map((movie, index) => (
-                        <MovieCard key={`${index}`} movie={movie} />
+                        <MovieResultCard key={`${index}`} movie={movie} />
                     ))
                 )}
             </Content>

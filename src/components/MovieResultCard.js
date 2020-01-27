@@ -4,6 +4,7 @@ import { format, parseISO } from 'date-fns';
 import { Link } from 'react-router-dom';
 import genres from '../data/genres';
 import { FALLBACK_POSTER } from '../setting/options';
+import MoviePoster from './MoviePoster';
 
 const MovieWrapper = styled.div`
     padding: 0;
@@ -76,7 +77,7 @@ const InfoListItem = styled.li`
     }
 `;
 
-const MovieCard = ({ movie }) => {
+const MovieResultCard = ({ movie }) => {
     const { id, title, release_date, poster_path, overview, genre_ids } = movie;
     const poster = poster_path === 'N/A' ? FALLBACK_POSTER : poster_path;
     const [genre, setGenre] = useState([]);
@@ -103,14 +104,7 @@ const MovieCard = ({ movie }) => {
     return (
         <MovieWrapper>
             <ImageWrapper>
-                <img
-                    alt={`The movie titled: ${title}`}
-                    src={
-                        poster
-                            ? `https://image.tmdb.org/t/p/w200${poster}`
-                            : 'https://via.placeholder.com/200x308&text=No+Poster+Available'
-                    }
-                />
+                <MoviePoster title={title} imageSize="w200" image={poster} />
             </ImageWrapper>
             <InfoWrapper>
                 <Heading>
@@ -134,4 +128,4 @@ const MovieCard = ({ movie }) => {
     );
 };
 
-export default MovieCard;
+export default MovieResultCard;

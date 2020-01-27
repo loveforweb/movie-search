@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 
 const SearchForm = styled.form`
     text-align: center;
@@ -66,6 +67,10 @@ const Search = props => {
             />
         </SearchForm>
     );
+};
+
+Search.propTypes = {
+    search: PropTypes.func.isRequired
 };
 
 export default Search;

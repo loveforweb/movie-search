@@ -5,6 +5,7 @@ import Listing from '../pages/Listing';
 import Details from '../pages/Details';
 import NotFound from '../pages/NotFound';
 import Header from '../components/Header';
+import ActorDetails from '../pages/ActorDetails';
 
 const Main = styled.main`
     width: 100%;
@@ -24,6 +25,7 @@ const AppRouter = () => (
                 <Switch>
                     <Route path="/" component={Listing} exact={true} />
                     <Route path="/details/:id" component={Details} />
+                    <Route path="/actor/:id" component={ActorDetails} />
                     <Route component={NotFound} />
                 </Switch>
             </Router>
