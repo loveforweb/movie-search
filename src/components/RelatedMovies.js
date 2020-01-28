@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import MoviePoster from '../components/MoviePoster';
@@ -32,16 +32,34 @@ const MoviePosterLink = styled(Link)`
 `;
 
 const RelatedMovie = ({ id, title, poster_path }) => {
+    const [mouseOver, setMouseOver] = useState('false');
+
+    const manageMouseOver = e => {
+        setMouseOver('true');
+    };
+
+    const manageMouseOut = e => {
+        setMouseOver('false');
+    };
+
     return (
         <MoviePosterItem key={id}>
-            <MoviePosterLink to={`/details/${id}`}>
+            <MoviePosterLink
+                to={`/details/${id}`}
+                onMouseOver={manageMouseOver}
+                onMouseOut={manageMouseOut}
+            >
                 <PosterWrap>
                     <MoviePoster
                         title={title}
                         imageSize="w200"
                         image={poster_path}
                     />
-                    <HoverOverlay text="View more" />
+                    <HoverOverlay
+                        prepend="View "
+                        text={title}
+                        mouseOver={mouseOver}
+                    />
                 </PosterWrap>
                 <MovieTitle>{title}</MovieTitle>
             </MoviePosterLink>

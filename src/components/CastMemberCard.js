@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import FALLBACK_CAST from '../img/blank-profile-picture.png';
 import { TMDB_IMAGE_URL } from '../setting/options';
+import HoverOverlay from '../components/HoverOverlay';
 
 const MemberCard = styled.div`
     width: 14rem;
@@ -11,7 +12,12 @@ const MemberCard = styled.div`
 `;
 
 const MemberImage = styled.div`
+    position: relative;
+    border-radius: 0.5rem;
+    overflow: hidden;
+
     img {
+        display: block;
         width: 100%;
     }
 `;
@@ -20,14 +26,27 @@ const Character = styled.p``;
 const Actor = styled.p``;
 
 const MemberLink = styled(Link)`
-    border: 0.3rem solid green;
     display: block;
 `;
 
 const CastMemeberCard = ({ profile_path, name, character, id }) => {
+    const [mouseOver, setMouseOver] = useState('false');
+
+    const manageMouseOver = e => {
+        setMouseOver('true');
+    };
+
+    const manageMouseOut = e => {
+        setMouseOver('false');
+    };
+
     return (
         <MemberCard>
-            <MemberLink to={`/actor/${id}`}>
+            <MemberLink
+                to={`/actor/${id}`}
+                onMouseOver={manageMouseOver}
+                onMouseOut={manageMouseOut}
+            >
                 <MemberImage>
                     {profile_path ? (
                         <img
@@ -37,7 +56,13 @@ const CastMemeberCard = ({ profile_path, name, character, id }) => {
                     ) : (
                         <img src={`${FALLBACK_CAST}`} alt={`${name} profile`} />
                     )}
+                    <HoverOverlay
+                        prepend="Read about "
+                        text={name}
+                        mouseOver={mouseOver}
+                    />
                 </MemberImage>
+
                 <MemberCredentials>
                     <Character>Character: {character}</Character>
                     <Actor>Actor: {name}</Actor>
