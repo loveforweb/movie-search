@@ -25,7 +25,9 @@ const TitleWrapper = styled.h2`
     }
 `;
 
-const PlotItem = styled.p``;
+const PlotItem = styled.p`
+    line-height: 1.8;
+`;
 
 const MovieInformation = ({
     title,
@@ -65,7 +67,7 @@ const MovieInformation = ({
 
                 <ItemWrapper>
                     <PlotItem>
-                        <span>Plot</span>: {overview}
+                        <span>Overview</span>: {overview}
                     </PlotItem>
                 </ItemWrapper>
             </InfoWrapper>

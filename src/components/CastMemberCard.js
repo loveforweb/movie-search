@@ -9,6 +9,7 @@ import HoverOverlay from '../components/HoverOverlay';
 const MemberCard = styled.div`
     width: 14rem;
     margin-right: 2rem;
+    margin-bottom: 2rem;
 `;
 
 const MemberImage = styled.div`
@@ -22,11 +23,26 @@ const MemberImage = styled.div`
     }
 `;
 const MemberCredentials = styled.div``;
-const Character = styled.p``;
-const Actor = styled.p``;
+
+const Actor = styled.p`
+    font-size: 1rem;
+    margin-bottom: 0;
+    text-align: center;
+`;
+
+const Character = styled.p`
+    font-size: 1rem;
+    text-align: center;
+`;
 
 const MemberLink = styled(Link)`
     display: block;
+    color: black;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
 `;
 
 const CastMemeberCard = ({ profile_path, name, character, id }) => {
@@ -64,8 +80,8 @@ const CastMemeberCard = ({ profile_path, name, character, id }) => {
                 </MemberImage>
 
                 <MemberCredentials>
-                    <Character>Character: {character}</Character>
                     <Actor>Actor: {name}</Actor>
+                    <Character>Character: {character}</Character>
                 </MemberCredentials>
             </MemberLink>
         </MemberCard>
