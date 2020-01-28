@@ -4,8 +4,8 @@ import styled from 'styled-components';
 import Loading from '../components/Loading';
 import Message from '../components/Message';
 import CastMemberCard from '../components/CastMemberCard';
-import MoviePoster from '../components/MoviePoster';
 import { TMDB_BASE_URL, API_KEY } from '../setting/options';
+import MovieInformation from '../components/MovieInformation';
 
 const DetailsWrapper = styled.div``;
 
@@ -14,36 +14,10 @@ const ContentWrapper = styled.div`
     flex-direction: column;
 `;
 
-const ImageWrapper = styled.div`
-    margin-right: 2rem;
-`;
-
-const InfoWrapper = styled.div``;
-
-const ItemWrapper = styled.div`
-    margin-bottom: 1.2rem;
-    span {
-        font-weight: bold;
-    }
-`;
-
-const TitleWrapper = styled.h2`
-    font-size: 3rem;
-
-    span {
-        font-size: 1.8rem;
-    }
-`;
-
 const CastWrap = styled.div`
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-`;
-
-const Row = styled.div`
-    display: flex;
-    flex-direction: row;
 `;
 
 const Details = props => {
@@ -71,13 +45,9 @@ const Details = props => {
                 }
 
                 if (castRequest) {
-                    const movieCharacters = json.cast.filter(member => {
-                        return member.character;
-                    });
-
                     dispatch({
                         type: 'MOVIE_CAST_UPDATE',
-                        payload: movieCharacters
+                        payload: json.cast
                     });
                     setCastRequest(false);
                 } else {
@@ -112,15 +82,6 @@ const Details = props => {
 
     const { details, loading, errorMessage, cast } = state;
 
-    const {
-        title,
-        release_date,
-        genres,
-        vote_average,
-        overview,
-        poster_path
-    } = details;
-
     return (
         <>
             <h1>Details</h1>
@@ -134,36 +95,7 @@ const Details = props => {
                     <button onClick={handleBackButton}>Go back</button>
                     <ContentWrapper>
                         <div className="row">
-                            {title && (
-                                <ImageWrapper>
-                                    <MoviePoster
-                                        title={title}
-                                        imageSize="w200"
-                                        image={poster_path}
-                                    />
-                                </ImageWrapper>
-                            )}
-                            <InfoWrapper>
-                                <TitleWrapper>
-                                    {title} <span>({release_date})</span>
-                                </TitleWrapper>
-                                <ItemWrapper>
-                                    <span>Year</span>: {release_date}
-                                </ItemWrapper>
-                                <ItemWrapper>
-                                    <span>Rated</span>: {vote_average}
-                                </ItemWrapper>
-                                <ItemWrapper>
-                                    {genres &&
-                                        genres.map(genre => (
-                                            <li key={genre.id}>{genre.name}</li>
-                                        ))}
-                                </ItemWrapper>
-
-                                <ItemWrapper>
-                                    <span>Plot</span>: {overview}
-                                </ItemWrapper>
-                            </InfoWrapper>
+                            <MovieInformation {...details} />
                         </div>
                         <div className="row">
                             <CastWrap>
@@ -171,7 +103,7 @@ const Details = props => {
                                     cast.map(member => (
                                         <CastMemberCard
                                             key={member.id}
-                                            member={member}
+                                            {...member}
                                         />
                                     ))}
                             </CastWrap>

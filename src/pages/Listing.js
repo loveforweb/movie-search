@@ -90,7 +90,7 @@ const Listing = () => {
                     />
                 ) : (
                     movies.map((movie, index) => (
-                        <MovieResultCard key={`${index}`} movie={movie} />
+                        <MovieResultCard key={index} {...movie} />
                     ))
                 )}
             </Content>

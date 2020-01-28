@@ -14,16 +14,14 @@ const memberReducer = (state, action) => {
                 ...state,
                 details: [],
                 errorMessage: null,
-                loading: true,
-                oeuvre: []
+                loading: true
             };
         case 'MEMBER_DETAIL_SUCCESS':
             return {
                 ...state,
                 details: action.payload,
                 errorMessage: null,
-                loading: false,
-                oeuvre: []
+                loading: false
             };
 
         case 'MEMBER_DETAIL_ERROR':
@@ -31,8 +29,7 @@ const memberReducer = (state, action) => {
                 ...state,
                 details: [],
                 errorMessage: action.error,
-                loading: false,
-                oeuvre: []
+                loading: false
             };
 
         case 'OEUVRE_REQUEST':
@@ -54,8 +51,7 @@ const memberReducer = (state, action) => {
             return {
                 ...state,
                 oeuvreErrorMessage: action.error,
-                oeuvreLoading: false,
-                oeuvre: []
+                oeuvreLoading: false
             };
 
         default:

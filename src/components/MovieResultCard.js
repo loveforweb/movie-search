@@ -58,8 +58,8 @@ const InfoListItem = styled.li`
         content: '';
         position: absolute;
         right: 0;
-        height: 10px;
-        width: 1px;
+        height: 1rem;
+        width: 0.1rem;
         background-color: black;
         top: 0;
     }
@@ -77,8 +77,14 @@ const InfoListItem = styled.li`
     }
 `;
 
-const MovieResultCard = ({ movie }) => {
-    const { id, title, release_date, poster_path, overview, genre_ids } = movie;
+const MovieResultCard = ({
+    id,
+    title,
+    release_date,
+    poster_path,
+    overview,
+    genre_ids
+}) => {
     const poster = poster_path === 'N/A' ? FALLBACK_POSTER : poster_path;
     const [genre, setGenre] = useState([]);
 

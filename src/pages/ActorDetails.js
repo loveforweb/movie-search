@@ -1,11 +1,20 @@
 import React, { useEffect, useState, useReducer } from 'react';
+import styled from 'styled-components';
 import { API_KEY } from '../setting/options';
-import { parseISO, isBefore } from 'date-fns';
+import { parseISO, isBefore, addMonths } from 'date-fns';
 import Loading from '../components/Loading';
 import Message from '../components/Message';
 import { memberReducer, initialState } from '../reducer/memberReducer';
 import MemberProfile from '../components/MemberProfile';
-import MoviePoster from '../components/MoviePoster';
+import RelatedMovie from '../components/RelatedMovies';
+
+const MoviePosterWrapper = styled.ul`
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0;
+    width: 100%;
+`;
 
 const ActorDetails = props => {
     const {
@@ -71,7 +80,7 @@ const ActorDetails = props => {
         getActorOeuvre();
 
         return () => {
-            console.log('cleanup');
+            setLoaded(false);
         };
     }, [url]);
 
@@ -85,7 +94,8 @@ const ActorDetails = props => {
     const dispatchOeuvre = oeuvreData => {
         const array = oeuvreData.map(item => {
             const date = parseISO(item.release_date);
-            if (isBefore(date, new Date())) {
+
+            if (isBefore(date, addMonths(new Date(), 1))) {
                 return {
                     ...item,
                     release_date: date
@@ -119,6 +129,8 @@ const ActorDetails = props => {
         oeuvreLoading
     } = state;
 
+    const movieLimit = oeuvre.length > 8 ? 8 : oeuvre.length;
+
     return (
         <>
             <button onClick={handleBackButton}>Go back</button>
@@ -127,7 +139,7 @@ const ActorDetails = props => {
             ) : errorMessage ? (
                 <Message message={errorMessage} status={'error'} />
             ) : (
-                details && <MemberProfile details={details} />
+                details && <MemberProfile {...details} />
             )}
 
             {oeuvreLoading && !oeuvreErrorMessage ? (
@@ -135,18 +147,19 @@ const ActorDetails = props => {
             ) : oeuvreErrorMessage ? (
                 <Message message={oeuvreErrorMessage} status={'error'} />
             ) : (
-                oeuvre &&
-                oeuvre.slice(0, 8).map((item, i) => {
-                    console.log(item);
-                    return (
-                        <MoviePoster
-                            title={item.title}
-                            imageSize="w200"
-                            image={item.poster_path}
-                            key={item.id}
-                        />
-                    );
-                })
+                <div className="row">
+                    <MoviePosterWrapper>
+                        {oeuvre &&
+                            oeuvre.slice(0, movieLimit).map((item, i) => {
+                                return (
+                                    item &&
+                                    item.id && (
+                                        <RelatedMovie {...item} key={i} />
+                                    )
+                                );
+                            })}
+                    </MoviePosterWrapper>
+                </div>
             )}
         </>
     );

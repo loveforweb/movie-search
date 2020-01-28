@@ -6,8 +6,8 @@ import FALLBACK_CAST from '../img/blank-profile-picture.png';
 import { TMDB_IMAGE_URL } from '../setting/options';
 
 const MemberCard = styled.div`
-    width: 140px;
-    margin-right: 20px;
+    width: 14rem;
+    margin-right: 2rem;
 `;
 
 const MemberImage = styled.div`
@@ -20,12 +20,11 @@ const Character = styled.p``;
 const Actor = styled.p``;
 
 const MemberLink = styled(Link)`
-    border: 3px solid green;
+    border: 0.3rem solid green;
     display: block;
 `;
 
-const CastMemeberCard = ({ member }) => {
-    const { profile_path, name, character, id } = member;
+const CastMemeberCard = ({ profile_path, name, character, id }) => {
     return (
         <MemberCard>
             <MemberLink to={`/actor/${id}`}>

@@ -3,11 +3,14 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { TMDB_IMAGE_URL } from '../setting/options';
 
-const BioTag = styled.p``;
+const BioTag = styled.div`
+    padding-left: 2rem;
+`;
 
 const DetailList = styled.ul`
     list-style: none;
     margin: 0;
+    padding: 0;
 `;
 
 const DetailItem = styled.li`
@@ -16,15 +19,22 @@ const DetailItem = styled.li`
 
 const ImageWrapper = styled.div``;
 
-const MemberProfile = ({ details }) => {
-    const {
-        profile_path,
-        name,
-        place_of_birth,
-        gender,
-        birthday,
-        biography
-    } = details;
+const MemberProfile = ({
+    profile_path,
+    name,
+    place_of_birth,
+    gender,
+    birthday,
+    biography
+}) => {
+    const createMarkup = () => {
+        return {
+            __html: `<span>Bio</span>: <p>${biography.replace(
+                /\n/gi,
+                '</p><p>'
+            )}</p>`
+        };
+    };
 
     return (
         <div>
@@ -38,22 +48,27 @@ const MemberProfile = ({ details }) => {
                         }
                         alt={name}
                     />
+                    <DetailList>
+                        <DetailItem>{name && `Name: ${name}`}</DetailItem>
+                        <DetailItem>
+                            {place_of_birth &&
+                                `Place of birth: ${place_of_birth}`}
+                        </DetailItem>
+                        <DetailItem>
+                            {gender && gender === 1
+                                ? 'Gender: Female'
+                                : 'Gender: Male'}
+                        </DetailItem>
+                        <DetailItem>
+                            {birthday && `DOB: ${birthday}`}
+                        </DetailItem>
+                    </DetailList>
                 </ImageWrapper>
-                <DetailList>
-                    <DetailItem>{name && `Name: ${name}`}</DetailItem>
-                    <DetailItem>
-                        {place_of_birth && `Place of birth: ${place_of_birth}`}
-                    </DetailItem>
-                    <DetailItem>
-                        {gender && gender === 2
-                            ? 'Gender: Male'
-                            : 'Gender: Female'}
-                    </DetailItem>
-                    <DetailItem>{birthday && `DOB: ${birthday}`}</DetailItem>
-                </DetailList>
-            </div>
-            <div className="row">
-                <BioTag>{biography && `Bio: ${biography}`}</BioTag>
+                <BioTag>
+                    {biography && (
+                        <div dangerouslySetInnerHTML={createMarkup()} />
+                    )}
+                </BioTag>
             </div>
         </div>
     );
