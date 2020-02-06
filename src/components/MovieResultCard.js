@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import { format, parseISO } from 'date-fns';
 import { Link } from 'react-router-dom';
 import genres from '../data/genres';
@@ -132,6 +133,15 @@ const MovieResultCard = ({
             </InfoWrapper>
         </MovieWrapper>
     );
+};
+
+MovieResultCard.propTypes = {
+    id: PropTypes.number.isRequired,
+    title: PropTypes.string.isRequired,
+    release_date: PropTypes.string,
+    poster_path: PropTypes.string,
+    overview: PropTypes.string,
+    genre_ids: PropTypes.array
 };
 
 export default MovieResultCard;

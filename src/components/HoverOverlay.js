@@ -58,8 +58,10 @@ const HoverOverlay = ({ prepend, text, mouseOver }) => {
     );
 };
 
-HoverOverlay.proTypes = {
-    text: PropTypes.string.isRequired
+HoverOverlay.propTypes = {
+    text: PropTypes.string.isRequired,
+    prepend: PropTypes.string,
+    mouseOver: PropTypes.string.isRequired
 };
 
 export default HoverOverlay;

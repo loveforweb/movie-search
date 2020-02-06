@@ -1,5 +1,6 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import '../styles/index.css';
 import { listingReducer, initialState } from '../reducer/listingReducer';
 import MovieResultCard from '../components/MovieResultCard';
@@ -21,10 +22,33 @@ const Content = styled.div`
     justify-content: space-between;
 `;
 
-const Listing = () => {
+const Listing = props => {
+    const { search } = props.location;
+    const searchQuery = search.replace('?s=', '');
     const [state, dispatch] = useReducer(listingReducer, initialState);
-    const [url, setUrl] = useState(`${TMDB_BASE_URL}/movie/popular?${API_KEY}`);
+    const initialQuery = searchQuery.length ? searchQuery : '';
+    const popularQueryUrl = `${TMDB_BASE_URL}/movie/popular?${API_KEY}`;
+    const initialSearchUrl = `${TMDB_BASE_URL}/search/movie?language=en-US&query=${initialQuery}&page=1&include_adult=false&${API_KEY}`;
+    const [url, setUrl] = useState(
+        initialQuery ? initialSearchUrl : popularQueryUrl
+    );
     const [searchTerm, setSearchTerm] = useState('');
+
+    useEffect(() => {
+        // if there is no props.search > return false
+        if (searchQuery.length === 0) {
+            setUrl(popularQueryUrl);
+            setSearchTerm('');
+            props.history.push({
+                search: ''
+            });
+            return;
+        }
+
+        if (searchQuery !== searchTerm) {
+            searchAction(searchQuery);
+        }
+    }, [searchQuery]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -51,10 +75,17 @@ const Listing = () => {
                 });
             }
         };
+
+        if (searchTerm.length && searchTerm !== searchQuery) {
+            props.history.push({
+                search: `?s=${searchTerm}`
+            });
+        }
+
         fetchData();
     }, [url]);
 
-    const search = searchTerm => {
+    const searchAction = searchTerm => {
         dispatch({
             type: 'SEARCH_MOVIES_REQUEST'
         });
@@ -71,7 +102,7 @@ const Listing = () => {
     return (
         <ListingWrapper>
             <TopRow>
-                <Search search={search} />
+                <Search searchAction={searchAction} />
                 {searchTerm && (
                     <p>
                         Your results for <strong>{searchTerm}</strong>
@@ -96,6 +127,12 @@ const Listing = () => {
             </Content>
         </ListingWrapper>
     );
+};
+
+Listing.propTypes = {
+    location: PropTypes.shape({
+        search: PropTypes.string.isRequired
+    })
 };
 
 export default Listing;

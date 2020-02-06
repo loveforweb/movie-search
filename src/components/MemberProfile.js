@@ -75,14 +75,12 @@ const MemberProfile = ({
 };
 
 MemberProfile.propTypes = {
-    details: PropTypes.shape({
-        profile_path: PropTypes.string,
-        name: PropTypes.string.isRequired,
-        place_of_birth: PropTypes.string,
-        gender: PropTypes.number,
-        birthday: PropTypes.string,
-        biography: PropTypes.string
-    })
+    profile_path: PropTypes.string,
+    name: PropTypes.string.isRequired,
+    place_of_birth: PropTypes.string,
+    gender: PropTypes.number,
+    birthday: PropTypes.string,
+    biography: PropTypes.string
 };
 
 export default MemberProfile;

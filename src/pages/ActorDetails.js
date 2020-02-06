@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useReducer } from 'react';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import { API_KEY } from '../setting/options';
 import { parseISO, isBefore, addMonths } from 'date-fns';
 import Loading from '../components/Loading';
@@ -163,6 +164,14 @@ const ActorDetails = props => {
             )}
         </>
     );
+};
+
+ActorDetails.propTypes = {
+    match: PropTypes.shape({
+        params: PropTypes.shape({
+            id: PropTypes.string.isRequired
+        })
+    })
 };
 
 export default ActorDetails;

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import MoviePoster from '../components/MoviePoster';
 import HoverOverlay from '../components/HoverOverlay';
@@ -65,6 +66,12 @@ const RelatedMovie = ({ id, title, poster_path }) => {
             </MoviePosterLink>
         </MoviePosterItem>
     );
+};
+
+RelatedMovie.propTypes = {
+    id: PropTypes.number.isRequired,
+    title: PropTypes.string.isRequired,
+    poster_path: PropTypes.string
 };
 
 export default RelatedMovie;

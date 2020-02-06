@@ -17,8 +17,7 @@ const MessageWrapper = styled.div`
         `}
 `;
 
-const Message = props => {
-    const { status, message } = props;
+const Message = ({ status, message }) => {
     return <MessageWrapper status={status}>{message}</MessageWrapper>;
 };
 

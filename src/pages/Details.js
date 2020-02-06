@@ -1,6 +1,7 @@
 import React, { useEffect, useReducer, useState } from 'react';
-import { initialState, detailsReducer } from '../reducer/detailsReducer';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { initialState, detailsReducer } from '../reducer/detailsReducer';
 import Loading from '../components/Loading';
 import Message from '../components/Message';
 import CastMemberCard from '../components/CastMemberCard';
@@ -113,6 +114,14 @@ const Details = props => {
             )}
         </>
     );
+};
+
+Details.propTypes = {
+    match: PropTypes.shape({
+        params: PropTypes.shape({
+            id: PropTypes.string.isRequired
+        })
+    })
 };
 
 export default Details;

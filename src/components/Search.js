@@ -36,7 +36,7 @@ const SearchInput = styled.input`
     min-width: 17rem;
 `;
 
-const Search = props => {
+const Search = ({ searchAction }) => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const handleSearchInputChanges = e => {
@@ -49,7 +49,7 @@ const Search = props => {
 
     const callSearchFunction = e => {
         e.preventDefault();
-        props.search(searchTerm);
+        searchAction(searchTerm);
         resetInputField();
     };
     return (
@@ -70,7 +70,7 @@ const Search = props => {
 };
 
 Search.propTypes = {
-    search: PropTypes.func.isRequired
+    searchAction: PropTypes.func.isRequired
 };
 
 export default Search;
