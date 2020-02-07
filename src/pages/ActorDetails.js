@@ -134,6 +134,7 @@ const ActorDetails = props => {
 
     return (
         <>
+            <h1>Actor details</h1>
             <button onClick={handleBackButton}>Go back</button>
             {loading && !errorMessage ? (
                 <Loading />

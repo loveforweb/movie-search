@@ -31,6 +31,10 @@ const MovieWrapper = styled.div`
 
 const Heading = styled.h2`
     font-size: 2.4rem;
+
+    span {
+        font-size: 1.6rem;
+    }
 `;
 
 const ImageWrapper = styled.div`
@@ -117,8 +121,10 @@ const MovieResultCard = ({
                 <Heading>
                     {title}{' '}
                     <span>
+                        (
                         {release_date &&
                             format(parseISO(`${release_date}`), 'yyyy')}
+                        )
                     </span>
                 </Heading>
                 <p>{overview}</p>

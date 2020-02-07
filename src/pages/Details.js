@@ -86,7 +86,6 @@ const Details = props => {
     return (
         <>
             <h1>Details</h1>
-            <p>Movie details</p>
             {loading && !errorMessage ? (
                 <Loading />
             ) : errorMessage ? (
