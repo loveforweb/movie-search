@@ -64,17 +64,19 @@ const Details = props => {
                 });
             }
         };
+
+        const buildCredits = async () => {
+            setCastRequest(true);
+            setUrl(`${TMDB_BASE_URL}/movie/${id}/credits?${API_KEY}`);
+        };
+
         fetchData();
         buildCredits();
+
         return () => {
             console.log('clean up');
         };
-    }, [url]);
-
-    const buildCredits = async () => {
-        setCastRequest(true);
-        setUrl(`${TMDB_BASE_URL}/movie/${id}/credits?${API_KEY}`);
-    };
+    }, [url, id]);
 
     const handleBackButton = e => {
         e.preventDefault();

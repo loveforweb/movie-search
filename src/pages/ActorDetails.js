@@ -77,20 +77,20 @@ const ActorDetails = props => {
             }
         };
 
+        const getActorOeuvre = () => {
+            setUrl(
+                `https://api.themoviedb.org/3/person/${id}/movie_credits?language=en-US&${API_KEY}`
+            );
+            setLoaded(true);
+        };
+
         fetchActorDetails();
         getActorOeuvre();
 
         return () => {
             setLoaded(false);
         };
-    }, [url]);
-
-    const getActorOeuvre = () => {
-        setUrl(
-            `https://api.themoviedb.org/3/person/${id}/movie_credits?language=en-US&${API_KEY}`
-        );
-        setLoaded(true);
-    };
+    }, [url, id, loaded]);
 
     const dispatchOeuvre = oeuvreData => {
         const array = oeuvreData.map(item => {
@@ -102,6 +102,8 @@ const ActorDetails = props => {
                     release_date: date
                 };
             }
+
+            return false;
         });
 
         array.sort(function(a, b) {
